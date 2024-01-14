@@ -14,11 +14,16 @@ TODO: Write aggregation code.
  The corresponding test can be found in test/tasks/AggregationKtTest.kt.
  You can use 'Navigate | Test' menu action (note the shortcut) to navigate to the test.
 */
-fun List<User>.aggregate(): List<User> =
-    fold(mutableMapOf<String, Int>()) { acc, user ->
-        acc[user.login] = acc[user.login]?.let { it + user.contributions } ?: user.contributions
-        acc
-    }
-        .map { User(it.key, it.value) }
+fun List<User>.aggregate(): List<User> {
+    return groupBy { it.login }
+        .map { (login, contributions) -> User(login, contributions.sumOf { it.contributions }) }
         .toList()
         .sortedByDescending { it.contributions }
+}
+//    fold(mutableMapOf<String, Int>()) { acc, user ->
+//        acc[user.login] = acc[user.login]?.let { it + user.contributions } ?: user.contributions
+//        acc
+//    }
+//        .map { User(it.key, it.value) }
+//        .toList()
+//        .sortedByDescending { it.contributions }
