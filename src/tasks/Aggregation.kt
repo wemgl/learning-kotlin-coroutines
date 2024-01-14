@@ -15,4 +15,10 @@ TODO: Write aggregation code.
  You can use 'Navigate | Test' menu action (note the shortcut) to navigate to the test.
 */
 fun List<User>.aggregate(): List<User> =
-    this
+    fold(mutableMapOf<String, Int>()) { acc, user ->
+        acc[user.login] = acc[user.login]?.let { it + user.contributions } ?: user.contributions
+        acc
+    }
+        .map { User(it.key, it.value) }
+        .toList()
+        .sortedByDescending { it.contributions }
